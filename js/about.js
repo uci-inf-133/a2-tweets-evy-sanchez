@@ -27,7 +27,6 @@ function parseTweets(runkeeper_tweets) {
 	achievementsCount = 0;
 	miscellaneousCount = 0;
 	for(var i = 0; i < tweet_array.length; i++){
-		console.log(tweet_array[i].source);
 		if(tweet_array[i].source == "completed_event"){
 			completedCount++;
 		} else if (tweet_array[i].source == "live_event"){
@@ -36,6 +35,15 @@ function parseTweets(runkeeper_tweets) {
 			achievementsCount++;
 		} else {
 			miscellaneousCount++;
+		}
+	}
+
+	//getting amount of tweets that are written by the user
+	writtenCount = 0;
+	for(var i = 0; i < tweet_array.length; i++){
+		if(tweet_array[i].written){
+			writtenCount++;
+			console.log(tweet_array[i].text.substring(tweet_array[i].text.indexOf("- ")+2, tweet_array[i].text.indexOf("http")));
 		}
 	}
 
@@ -52,6 +60,7 @@ function parseTweets(runkeeper_tweets) {
 	document.getElementById('firstDate').innerText = earliest_tweet.time.toLocaleDateString('en-US', options);
 	document.getElementById('lastDate').innerText = latest_tweet.time.toLocaleDateString('en-US', options);
 
+	//kinda of events and their numbers
 	completedEvents = document.getElementsByClassName('completedEvents');
 	liveEvents = document.getElementsByClassName('liveEvents');
 	achievements = document.getElementsByClassName('achievements');
@@ -64,26 +73,35 @@ function parseTweets(runkeeper_tweets) {
 	for(var i = 0; i < completedEvents.length; i++){
 		completedEvents[i].innerText = completedCount;}
 	for(var i = 0; i < completedEventsPct.length; i++){
-		completedEventsPct[i].innerText = math.format(completedCount/tweet_array.length, {notation:'fixed', precision: 2});
+		completedEventsPct[i].innerText = math.format(completedCount/tweet_array.length, {notation:'fixed', precision: 2})+"%";
 	}
 
 	for(var i = 0; i < liveEvents.length; i++){ 
 		liveEvents[i].innerText = liveCount;}
 	for(var i = 0; i < liveEventsPct.length; i++){
-		liveEventsPct[i].innerText = math.format(liveCount/tweet_array.length, {notation:'fixed', precision: 2});
+		liveEventsPct[i].innerText = math.format(liveCount/tweet_array.length, {notation:'fixed', precision: 2})+"%";
 	}
 
 	for(var i = 0; i < achievements.length; i++){
 		achievements[i].innerText = achievementsCount;}
 	for(var i = 0; i < achievementsPct.length; i++){
-		achievementsPct[i].innerText = math.format(achievementsCount/tweet_array.length, {notation:'fixed', precision: 2});
+		achievementsPct[i].innerText = math.format(achievementsCount/tweet_array.length, {notation:'fixed', precision: 2})+"%";
 	}
 
 	for(var i = 0; i < miscellaneous.length; i++){
 		miscellaneous[i].innerText = miscellaneousCount;}
 	for(var i = 0; i < miscellaneousPct.length; i++){
-		miscellaneousPct[i].innerText = math.format(miscellaneousCount/tweet_array.length, {notation:'fixed', precision: 2});
+		miscellaneousPct[i].innerText = math.format(miscellaneousCount/tweet_array.length, {notation:'fixed', precision: 2})+"%";
 	}
+
+	//written tweets
+	written = document.getElementsByClassName('written');
+	writtenPct = document.getElementsByClassName('writtenPct');
+	for(var i = 0; i < written.length; i++){
+		written[i].innerText = writtenCount; }
+	for(var i = 0; i < writtenPct.length; i++){ 
+		writtenPct[i].innerText = math.format(writtenCount/completedCount, {notation:'fixed', precision: 2})+"%";
+	};
 }
 
 //Wait for the DOM to load
