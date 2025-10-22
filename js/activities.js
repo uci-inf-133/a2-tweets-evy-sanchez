@@ -10,24 +10,28 @@ function parseTweets(runkeeper_tweets) {
 	});
 
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
-	tweet_array_sorted = new Object();
+	tweet_array_sorted = [];
+	logged_activities = [];
 	for(var i = 0; i < tweet_array.length; i++){
 		if(tweet_array[i].source == 'completed_event'){
-			if(!Object.keys(tweet_array_sorted).includes(tweet_array[i].activityType)){
-				tweet_array_sorted[tweet_array[i].activityType] = 1;
+			if(!logged_activities.includes(tweet_array[i].activityType)) {
+				tweet_array_sorted.push({"Activity": tweet_array[i].activityType, "Count" : 1});
+				logged_activities.push(tweet_array[i].activityType);
 			} else {
-				tweet_array_sorted[tweet_array[i].activityType] += 1;
+				for(var k = 0; k < tweet_array_sorted.length; k++)
+					if(tweet_array_sorted[k]["Activity"]==tweet_array[i].activityType)
+						tweet_array_sorted[k]["Count"]+=1;
 			}
 		}
 	}
-	tweet_array_sorted = Object.entries(tweet_array_sorted).sort((a, b) => b[1]-a[1]);
-	tweet_array_sorted.forEach(pair => console.log(pair[0]+": "+pair[1]));
+	tweet_array_sorted = tweet_array_sorted.sort((a, b) => b["Count"]-a["Count"]);
+	tweet_array_sorted.forEach(item => console.log(item));
 
 	//changing to DOM to update values
-	document.getElementById('numberActivities').innerText = tweet_array_sorted.length;
-	document.getElementById('firstMost').innerText = tweet_array_sorted[0][0];
-	document.getElementById('secondMost').innerText = tweet_array_sorted[1][0];
-	document.getElementById('thirdMost').innerText = tweet_array_sorted[2][0];
+	document.getElementById('numberActivities').innerText = logged_activities.length;
+	document.getElementById('firstMost').innerText = tweet_array_sorted[0]["Activity"];
+	document.getElementById('secondMost').innerText = tweet_array_sorted[1]["Activity"];
+	document.getElementById('thirdMost').innerText = tweet_array_sorted[2]["Activity"];
 
 	activity_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
@@ -36,7 +40,18 @@ function parseTweets(runkeeper_tweets) {
 	    "values": tweet_array_sorted
 	  } ,
 	  //TODO: Add mark and encoding
-	  "mark" : "point"
+	  "mark" : "bar",
+	  "encoding" : {
+		"x" : {
+			"field": "Activity",
+			"type" : "nominal",
+			"axis" : {"labelAngle": -45}
+		},
+		"y" : {
+			"field": "Count",
+			"type" : "quantitative"
+		}
+	  }
 	};
 	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 
