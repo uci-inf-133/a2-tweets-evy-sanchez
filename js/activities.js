@@ -10,6 +10,17 @@ function parseTweets(runkeeper_tweets) {
 	});
 
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
+	tweet_array_sorted = new Object();
+	// for(var i = 0; i < tweet_array.length; i++){
+	// 	if(tweet_array[i].source == 'completed_event'){
+	// 		if(tweet_array[i].activityType != 'Just completed a ') {
+	// 			if(!Object.keys(tweet_array_sorted).includes(tweet_array[i].activityType)){
+	// 				tweet_array_sorted[tweet_array[i].activityType] = 0;
+	// 			}
+	// 		tweet_array_sorted[tweet_array[i].activityType] += 1;
+	// 		}
+	// 	}
+	// }
 
 	activity_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
@@ -19,7 +30,7 @@ function parseTweets(runkeeper_tweets) {
 	  }
 	  //TODO: Add mark and encoding
 	};
-	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
+	//vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.

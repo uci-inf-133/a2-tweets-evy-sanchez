@@ -43,7 +43,6 @@ function parseTweets(runkeeper_tweets) {
 	for(var i = 0; i < tweet_array.length; i++){
 		if(tweet_array[i].written){
 			writtenCount++;
-			console.log(tweet_array[i].text.substring(tweet_array[i].text.indexOf("- ")+2, tweet_array[i].text.indexOf("http")));
 		}
 	}
 
