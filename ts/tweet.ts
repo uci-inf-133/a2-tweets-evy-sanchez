@@ -1,9 +1,6 @@
 class Tweet {
 	private text:string;
 	time:Date;
-    private _source:string = "";
-    private _activity:string = "";
-    private _distance:number = 0;
 
 	constructor(tweet_text:string, tweet_time:string) {
         this.text = tweet_text;
@@ -13,15 +10,14 @@ class Tweet {
 	//returns either 'live_event', 'achievement', 'completed_event', or 'miscellaneous'
     get source():string {
         if(this.text.startsWith("Just completed") || this.text.startsWith("Just posted")){
-            this._source = "completed_event";
+            return "completed_event";
         } else if (this.text.startsWith("Watch")){
-            this._source = "live_event";
+            return "live_event";
         } else if (this.text.startsWith("Achieved")) {
-            this._source = "achievement";
+            return "achievement";
         } else {
-            this._source = "miscellaneous";
+            return "miscellaneous";
         }
-        return this._source;
     }
 
     //returns a boolean, whether the text includes any content written by the person tweeting.
@@ -45,21 +41,18 @@ class Tweet {
             return "unknown";
         }
         if (this.written) {
-            if(this.text.includes(' km'))
-                this._activity = this.text.substring(this.text.indexOf('km ')+3, this.text.indexOf(' - '));
-            else if(this.text.includes(' mi'))
-                this._activity = this.text.substring(this.text.indexOf('mi ')+3, this.text.indexOf(' - '));
+            if(this.text.includes(' km '))
+                return this.text.substring(this.text.indexOf('km ')+3, this.text.indexOf(' - '));
+            else if(this.text.includes(' mi '))
+                return this.text.substring(this.text.indexOf('mi ')+3, this.text.indexOf(' - '));
         } else {
-            if(this.text.includes(' km'))
-                this._activity = this.text.substring(this.text.indexOf('km ')+3, this.text.indexOf(' with'));
-            else if(this.text.includes(' mi'))
-                this._activity = this.text.substring(this.text.indexOf('mi ')+3, this.text.indexOf(' with'));
+            if(this.text.includes(' km '))
+                return this.text.substring(this.text.indexOf('km ')+3, this.text.indexOf(' with'));
+            else if(this.text.includes(' mi '))
+                return this.text.substring(this.text.indexOf('mi ')+3, this.text.indexOf(' with'));
         }
         //not a distance but time based activity
-        if(this._activity == ""){
-            this._activity = this.text.substring(this.text.indexOf('a ')+2, this.text.indexOf(' in'));
-        }
-        return this._activity;
+        return this.text.substring(this.text.indexOf(' a')+3, this.text.indexOf(' in')).trimStart();
     }
 
     get distance():number {
@@ -68,13 +61,14 @@ class Tweet {
         }
         //TODO: prase the distance from the text of the tweet
         if(this.text.includes(' mi')){
-            this._distance = Number(this.text.substring(this.text.indexOf('a ')+2, this.text.indexOf(' mi')));
+            return Number(this.text.substring(this.text.indexOf(' a')+3, this.text.indexOf(' mi')));
         }
         else if(this.text.includes(' km')){
-            this._distance = Number(this.text.substring(this.text.indexOf('a ')+2, this.text.indexOf(' km')));
-            this._distance = Number(this._distance)*.609;
+            return Number(this.text.substring(this.text.indexOf(' a')+3, this.text.indexOf(' km')))*.609;
         }
-        return this._distance;
+        else {
+            return 0;
+        }
     }
 
     getHTMLTableRow(rowNumber:number):string {
