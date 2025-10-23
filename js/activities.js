@@ -94,6 +94,16 @@ function parseTweets(runkeeper_tweets) {
 	};
 
 	vegaEmbed('#distanceVis', distance_vis_spec);
+
+	document.getElementById("aggregate").addEventListener('click', function(){
+		if(!distance_vis_spec.encoding.y.aggregate){
+			distance_vis_spec.encoding.y.aggregate = "mean";
+			document.getElementById("aggregate").innerText = 'Show all activities';
+		} else {
+			delete distance_vis_spec.encoding.y.aggregate;
+			document.getElementById("aggregate").innerText = 'Show means';
+		}
+		vegaEmbed('#distanceVis', distance_vis_spec)});
 }
 
 //Wait for the DOM to load
