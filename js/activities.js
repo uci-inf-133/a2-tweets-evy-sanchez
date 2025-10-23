@@ -10,34 +10,34 @@ function parseTweets(runkeeper_tweets) {
 	});
 
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
-	tweet_array_sorted = [];
+	activity_counts_sorted = [];
 	logged_activities = [];
 	for(var i = 0; i < tweet_array.length; i++){
 		if(tweet_array[i].source == 'completed_event'){
 			if(!logged_activities.includes(tweet_array[i].activityType)) {
-				tweet_array_sorted.push({"Activity": tweet_array[i].activityType, "Count" : 1});
+				activity_counts_sorted.push({"Activity": tweet_array[i].activityType, "Count" : 1});
 				logged_activities.push(tweet_array[i].activityType);
 			} else {
-				for(var k = 0; k < tweet_array_sorted.length; k++)
-					if(tweet_array_sorted[k]["Activity"]==tweet_array[i].activityType)
-						tweet_array_sorted[k]["Count"]+=1;
+				for(var k = 0; k < activity_counts_sorted.length; k++)
+					if(activity_counts_sorted[k]["Activity"]==tweet_array[i].activityType)
+						activity_counts_sorted[k]["Count"]+=1;
 			}
 		}
 	}
-	tweet_array_sorted = tweet_array_sorted.sort((a, b) => b["Count"]-a["Count"]);
-	tweet_array_sorted.forEach(item => console.log(item));
+	activity_counts_sorted = activity_counts_sorted.sort((a, b) => b["Count"]-a["Count"]);
+	activity_counts_sorted.forEach(item => console.log(item));
 
 	//changing to DOM to update values
 	document.getElementById('numberActivities').innerText = logged_activities.length;
-	document.getElementById('firstMost').innerText = tweet_array_sorted[0]["Activity"];
-	document.getElementById('secondMost').innerText = tweet_array_sorted[1]["Activity"];
-	document.getElementById('thirdMost').innerText = tweet_array_sorted[2]["Activity"];
+	document.getElementById('firstMost').innerText = activity_counts_sorted[0]["Activity"];
+	document.getElementById('secondMost').innerText = activity_counts_sorted[1]["Activity"];
+	document.getElementById('thirdMost').innerText = activity_counts_sorted[2]["Activity"];
 
 	activity_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 	  "description": "A graph of the number of Tweets containing each type of activity.",
 	  "data": {
-	    "values": tweet_array_sorted
+	    "values": activity_counts_sorted
 	  } ,
 	  //TODO: Add mark and encoding
 	  "mark" : "bar",
@@ -57,6 +57,43 @@ function parseTweets(runkeeper_tweets) {
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.
+	let top_activities_tweets = [];
+	for(var i = 0; i < tweet_array.length; i++){
+		var activity = tweet_array[i].activityType;
+		if(activity == activity_counts_sorted[0]["Activity"] || activity == activity_counts_sorted[1]["Activity"] || activity == activity_counts_sorted[2]["Activity"]){
+			top_activities_tweets.push({"Activity":activity, "distance":tweet_array[i].distance, "time (day)":tweet_array[i].time.toLocaleDateString('en-US', {"weekday":"short"})});
+		}
+	}
+	top_activities_tweets.forEach(item => console.log(item));
+
+	distance_vis_spec = {
+		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+		"description": "A graph of the distances reported in tweets with the 3 most popular activities and the day of the week they were performed.",
+		"width":200,
+		"height":250,
+		"data": {
+	    	"values": top_activities_tweets
+	  	} ,
+		"mark" : {"type":"point"},
+		"encoding" : {
+			"x" : {
+				"field" : "time (day)",
+				"type" : "nominal",
+				"sort" : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+				"axis" : {"labelAngle" : 0}
+			},
+			"y" : {
+				"field" : "distance",
+				"type" : "quantitative"
+			},
+			"color" : {
+				"field" : "Activity",
+				"type" : "nominal"
+			}
+		}
+	};
+
+	vegaEmbed('#distanceVis', distance_vis_spec);
 }
 
 //Wait for the DOM to load

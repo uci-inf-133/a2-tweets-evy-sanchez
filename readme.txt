@@ -8,7 +8,7 @@
 - */3 Adding a text earch interface
 
 2. How long, in hours, did it take you to complete this assignment?
-   So far I've got 7 hours and 35 minutes down
+   So far I've got 11 hours and 50 minutes down
 
 
 3. What online resources did you consult when completing this assignment? (list sites like StackOverflow or specific URLs for tutorials; describe queries to Generative AI or use of AI-based code completion)
